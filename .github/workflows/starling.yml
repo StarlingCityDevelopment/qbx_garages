@@ -21,7 +21,7 @@ jobs:
           mkdir -p ./temp/qbx_garages
           mkdir -p ./temp/qbx_garages/locales/
           cp ./fxmanifest.lua ./temp/qbx_garages
-          cp ./{locales/en.lua,locales/fr.lua} ./temp/qbx_garages/locales
+          cp ./{locales/en.json,locales/fr.json} ./temp/qbx_garages/locales
           cp -r ./{client,config,server,shared} ./temp/qbx_garages
           cd ./temp && zip -r ../qbx_garages.zip ./qbx_garages
 
