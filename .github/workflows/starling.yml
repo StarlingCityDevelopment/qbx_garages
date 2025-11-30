@@ -1,0 +1,46 @@
+name: Zip Creator
+
+on:
+  push:
+
+jobs:
+  create-zip:
+    name: Build and Create Downloadable Zip
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install archive tools
+        run: sudo apt install zip
+
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Bundle files
+        run: |
+          mkdir -p ./temp/qbx_garages
+          mkdir -p ./temp/qbx_garages/locales/
+          cp ./fxmanifest.lua ./temp/qbx_garages
+          cp ./{locales/en.lua,locales/fr.lua} ./temp/qbx_garages/locales
+          cp -r ./{client,config,server,shared} ./temp/qbx_garages
+          cd ./temp && zip -r ../qbx_garages.zip ./qbx_garages
+
+      - name: Create Release
+        uses: 'marvinpinto/action-automatic-releases@v1.2.1'
+        with:
+          automatic_release_tag: "latest"
+          repo_token: '${{ secrets.GITHUB_TOKEN }}'
+          title: 'Ready to download'
+          prerelease: true
+          files: qbx_garages.zip
+        env:
+          CI: false
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.PAT }}
+          repository: StarlingCityDevelopment/resources
+          event-type: update-resources
+          client-payload: '{"res": "qbx_garages"}'

@@ -1,5 +1,6 @@
 {
     "error": {
+        "no_space": "Un autre véhicule a occupé l'espace.",
         "no_access": "Vous n'avez pas accès à ce garage",
         "no_vehicles": "Vous n'avez actuellement aucun véhicule à cet endroit...",
         "not_impound": "Votre véhicule n'est pas à la fourrière",
@@ -7,10 +8,16 @@
         "not_correct_type": "Vous ne pouvez pas stocker ce type de véhicule ici",
         "not_enough": "Pas assez d'argent",
         "vehicle_occupied": "Vous ne pouvez pas stocker ce véhicule car il n'est pas vide",
-        "in_vehicle": "Vous êtes déjà dans un véhicule..."
+        "in_vehicle": "Vous êtes déjà dans un véhicule...",
+        "spawn_in_progress": "Veuillez attendre que votre véhicule soit livré...",
+        "garage_full": "Ce garage a atteint sa limite de véhicules",
+        "max_upgrade": "Ce garage est déjà à capacité maximale",
+        "upgrade_disabled": "Les améliorations ne sont pas disponibles pour ce garage",
+        "upgrade_failed": "Échec de l'amélioration du garage"
     },
     "success": {
-        "vehicle_parked": "Véhicule stocké"
+        "vehicle_parked": "Véhicule stocké",
+        "garage_upgraded": "Garage amélioré avec succès"
     },
     "menu": {
         "information": "Informations",
@@ -19,11 +26,15 @@
         "engine": "Moteur",
         "fuel": "Carburant",
         "take_out": "Sortir",
-        "veh_impounded": "Votre véhicule a été mis en fourrière par la police"
+        "veh_impounded": "Votre véhicule a été mis en fourrière par la police",
+        "garage_capacity": "Capacité du garage",
+        "upgrade_garage": "Améliorer le garage",
+        "upgrade_confirm": "Améliorer ce garage pour $%s?\nNouvelle capacité: %s véhicules"
     },
     "info": {
-        "car_e": "E - Ouvrir le garage",
-        "park_e": "E - Stocker le véhicule",
-        "impound_e": "E - Ouvrir la fourrière"
+        "car_e": "Ouvrir le garage",
+        "park_e": "Stocker le véhicule",
+        "impound_e": "Ouvrir la fourrière",
+        "upgrade_garage": "Améliorer le garage"
     }
 }

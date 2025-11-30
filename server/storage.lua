@@ -1,6 +1,6 @@
 ---@async
 local function moveOutVehiclesIntoGarages()
-    MySQL.update('UPDATE player_vehicles SET state = ? WHERE state = ?', {VehicleState.GARAGED, VehicleState.OUT})
+    MySQL.update('UPDATE player_vehicles SET state = ? WHERE state = ?', { VehicleState.GARAGED, VehicleState.OUT })
 end
 
 ---@param vehicleId integer
@@ -26,8 +26,23 @@ local function setVehicleDepotPrice(vehicleId, depotPrice)
     })
 end
 
+---@param citizenid string
+---@param garageName string
+---@return integer
+local function getVehicleCountInGarage(citizenid, garageName)
+    return MySQL.scalar.await([[
+        SELECT COUNT(*) FROM player_vehicles
+        WHERE citizenid = ? AND garage = ? AND state = ?
+    ]], {
+        citizenid,
+        garageName,
+        VehicleState.GARAGED
+    }) or 0
+end
+
 return {
     moveOutVehiclesIntoGarages = moveOutVehiclesIntoGarages,
     setVehicleGarage = setVehicleGarage,
     setVehicleDepotPrice = setVehicleDepotPrice,
+    getVehicleCountInGarage = getVehicleCountInGarage,
 }

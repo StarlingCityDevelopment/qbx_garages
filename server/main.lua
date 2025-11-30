@@ -18,6 +18,7 @@ lib.versionCheck('Qbox-project/qbx_garages')
 Config = require 'config.server'
 VEHICLES = exports.qbx_core:GetVehiclesByName()
 Storage = require 'server.storage'
+Limits = require 'server.limits'
 ---@type table<string, GarageConfig>
 Garages = Config.garages
 
@@ -191,7 +192,8 @@ end
 
 lib.callback.register('qbx_garages:server:isParkable', function(source, garage, netId)
     local vehicle = NetworkGetEntityFromNetworkId(netId)
-    local vehicleId = Entity(vehicle).state.vehicleid or exports.qbx_vehicles:GetVehicleIdByPlate(GetVehicleNumberPlateText(vehicle))
+    local vehicleId = Entity(vehicle).state.vehicleid or
+        exports.qbx_vehicles:GetVehicleIdByPlate(GetVehicleNumberPlateText(vehicle))
     return isParkable(source, vehicleId, garage)
 end)
 
@@ -202,11 +204,25 @@ end)
 lib.callback.register('qbx_garages:server:parkVehicle', function(source, netId, props, garage)
     assert(Garages[garage] ~= nil, string.format('Garage %s not found. Did you register this garage?', garage))
     local vehicle = NetworkGetEntityFromNetworkId(netId)
-    local vehicleId = Entity(vehicle).state.vehicleid or exports.qbx_vehicles:GetVehicleIdByPlate(GetVehicleNumberPlateText(vehicle))
-    local owned = isParkable(source, vehicleId, garage) --Check ownership
+    local vehicleId = Entity(vehicle).state.vehicleid or
+        exports.qbx_vehicles:GetVehicleIdByPlate(GetVehicleNumberPlateText(vehicle))
+
+    local owned = isParkable(source, vehicleId, garage)
     if not owned then
         exports.qbx_core:Notify(source, locale('error.not_owned'), 'error')
         return
+    end
+
+    local canStore, limitError = Limits.canStoreVehicle(source, garage)
+    if not canStore then
+        if limitError == 'limit_reached' then
+            exports.qbx_core:Notify(source, locale('error.garage_full'), 'error')
+        end
+        return
+    end
+
+    if GetResourceState("t1ger_mechanic") == "started" then
+        exports["t1ger_mechanic"]:SaveVehicleData(vehicle)
     end
 
     exports.qbx_vehicles:SaveVehicle(vehicle, {
@@ -224,4 +240,44 @@ AddEventHandler('onResourceStart', function(resource)
     if Config.autoRespawn then
         Storage.moveOutVehiclesIntoGarages()
     end
+end)
+
+lib.callback.register('qbx_garages:server:getLimitInfo', function(source, garageName)
+    return Limits.getLimitInfo(source, garageName)
+end)
+
+lib.callback.register('qbx_garages:server:getUpgradeInfo', function(source, garageName)
+    return Limits.getUpgradeInfo(source, garageName)
+end)
+
+lib.callback.register('qbx_garages:server:upgradeGarage', function(source, garageName)
+    local garage = Garages[garageName]
+    if not garage then return false, 'invalid_garage' end
+
+    local player = exports.qbx_core:GetPlayer(source)
+    if not getCanAccessGarage(player, garage) then
+        return false, 'no_access'
+    end
+
+    local success, errorCode = Limits.purchaseUpgrade(source, garageName)
+
+    if success then
+        exports.qbx_core:Notify(source, locale('success.garage_upgraded'), 'success')
+    else
+        if errorCode == 'not_enough_money' then
+            exports.qbx_core:Notify(source, locale('error.not_enough'), 'error')
+        elseif errorCode == 'max_level' then
+            exports.qbx_core:Notify(source, locale('error.max_upgrade'), 'error')
+        elseif errorCode == 'upgrade_disabled' then
+            exports.qbx_core:Notify(source, locale('error.upgrade_disabled'), 'error')
+        else
+            exports.qbx_core:Notify(source, locale('error.upgrade_failed'), 'error')
+        end
+    end
+
+    return success, errorCode
+end)
+
+lib.callback.register('qbx_garages:server:canStoreVehicle', function(source, garageName)
+    return Limits.canStoreVehicle(source, garageName)
 end)

@@ -22,10 +22,10 @@ local function getProgressColor(percent)
 end
 
 local VehicleCategory = {
-    all = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22},
-    car = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 17, 18, 19, 20, 22},
-    air = {15, 16},
-    sea = {14},
+    all = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22 },
+    car = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 17, 18, 19, 20, 22 },
+    air = { 15, 16 },
+    sea = { 14 },
 }
 
 ---@param category VehicleType
@@ -105,7 +105,8 @@ local function displayVehicleInfo(vehicle, garageName, garageInfo, accessPoint)
         {
             title = locale('menu.information'),
             icon = 'circle-info',
-            description = locale('menu.description', vehicleLabel, vehicle.props.plate, lib.math.groupdigits(vehicle.depotPrice)),
+            description = locale('menu.description', vehicleLabel, vehicle.props.plate,
+                lib.math.groupdigits(vehicle.depotPrice)),
             readOnly = true,
         },
         {
@@ -182,6 +183,7 @@ end
 local function openGarageMenu(garageName, garageInfo, accessPoint)
     ---@type PlayerVehicle[]?
     local vehicleEntities = lib.callback.await('qbx_garages:server:getGarageVehicles', false, garageName)
+    local limitInfo = lib.callback.await('qbx_garages:server:getLimitInfo', false, garageName)
 
     if not vehicleEntities then
         exports.qbx_core:Notify(locale('error.no_vehicles'), 'error')
@@ -193,9 +195,24 @@ local function openGarageMenu(garageName, garageInfo, accessPoint)
     end)
 
     local options = {}
+
+    if limitInfo and limitInfo.enabled then
+        local limitText = limitInfo.limit == math.huge and '∞' or tostring(limitInfo.limit)
+        options[#options + 1] = {
+            title = locale('menu.garage_capacity'),
+            icon = 'warehouse',
+            description = ('%s / %s'):format(limitInfo.current, limitText),
+            readOnly = true,
+            progress = limitInfo.limit ~= math.huge and math.floor((limitInfo.current / limitInfo.limit) * 100) or 0,
+            colorScheme = getProgressColor(100 -
+                (limitInfo.limit ~= math.huge and math.floor((limitInfo.current / limitInfo.limit) * 100) or 0)),
+        }
+    end
+
     for i = 1, #vehicleEntities do
         local vehicleEntity = vehicleEntities[i]
-        local vehicleLabel = ('%s %s'):format(VEHICLES[vehicleEntity.modelName].brand, VEHICLES[vehicleEntity.modelName].name)
+        local vehicleLabel = ('%s %s'):format(VEHICLES[vehicleEntity.modelName].brand,
+            VEHICLES[vehicleEntity.modelName].name)
 
         options[#options + 1] = {
             title = vehicleLabel,
@@ -220,7 +237,18 @@ end
 ---@param garageName string
 local function parkVehicle(vehicle, garageName)
     if GetVehicleNumberOfPassengers(vehicle) ~= 1 then
-        local isParkable = lib.callback.await('qbx_garages:server:isParkable', false, garageName, NetworkGetNetworkIdFromEntity(vehicle))
+        local canStore, limitError = lib.callback.await('qbx_garages:server:canStoreVehicle', false, garageName)
+        if not canStore then
+            if limitError == 'limit_reached' then
+                exports.qbx_core:Notify(locale('error.garage_full'), 'error', 5000)
+            else
+                exports.qbx_core:Notify(locale('error.not_owned'), 'error', 5000)
+            end
+            return
+        end
+
+        local isParkable = lib.callback.await('qbx_garages:server:isParkable', false, garageName,
+            NetworkGetNetworkIdFromEntity(vehicle))
 
         if not isParkable then
             exports.qbx_core:Notify(locale('error.not_owned'), 'error', 5000)
@@ -230,7 +258,8 @@ local function parkVehicle(vehicle, garageName)
         kickOutPeds(vehicle)
         SetVehicleDoorsLocked(vehicle, 2)
         Wait(1500)
-        lib.callback.await('qbx_garages:server:parkVehicle', false, NetworkGetNetworkIdFromEntity(vehicle), lib.getVehicleProperties(vehicle), garageName)
+        lib.callback.await('qbx_garages:server:parkVehicle', false, NetworkGetNetworkIdFromEntity(vehicle),
+            lib.getVehicleProperties(vehicle), garageName)
         exports.qbx_core:Notify(locale('success.vehicle_parked'), 'primary', 4500)
     else
         exports.qbx_core:Notify(locale('error.vehicle_occupied'), 'error', 3500)
@@ -261,59 +290,78 @@ local function createZones(garageName, garage, accessPoint, accessPointIndex)
         local dropZone, coordsZone
         lib.zones.sphere({
             coords = accessPoint.coords,
-            radius = 15,
+            radius = 30.0,
             onEnter = function()
                 if accessPoint.dropPoint and garage.type ~= GarageType.DEPOT then
-                    dropZone = lib.zones.sphere({
-                        coords = accessPoint.dropPoint,
-                        radius = 1.5,
-                        onEnter = function()
-                            if not cache.vehicle then return end
-                            lib.showTextUI(locale('info.park_e'))
+                    dropZone = exports.sleepless_interact:addCoords(accessPoint.dropPoint, {
+                        id = 'qbx:garages:dropPoint',
+                        icon = 'car-side',
+                        label = locale('info.park_e'),
+                        distance = 7.5,
+                        allowInVehicle = true,
+                        onSelect = function()
+                            if not checkCanAccess(garage) then return end
+                            parkVehicle(cache.vehicle, garageName)
                         end,
-                        onExit = function()
-                            lib.hideTextUI()
+                        canInteract = function(_, distance)
+                            return cache.vehicle and distance <= 2.5
                         end,
-                        inside = function()
-                            if not cache.vehicle then return end
-                            if IsControlJustReleased(0, 38) then
-                                if not checkCanAccess(garage) then return end
-                                parkVehicle(cache.vehicle, garageName)
-                            end
-                        end,
-                        debug = config.debugPoly
                     })
                 end
-                coordsZone = lib.zones.sphere({
-                    coords = accessPoint.coords,
-                    radius = 1,
-                    onEnter = function()
-                        if accessPoint.dropPoint and cache.vehicle then return end
-                        lib.showTextUI((garage.type == GarageType.DEPOT and locale('info.impound_e')) or (cache.vehicle and locale('info.park_e')) or locale('info.car_e'))
-                    end,
-                    onExit = function()
-                        lib.hideTextUI()
-                    end,
-                    inside = function()
-                        if accessPoint.dropPoint and cache.vehicle then return end
-                        if IsControlJustReleased(0, 38) then
+                coordsZone = exports.sleepless_interact:addCoords(accessPoint.coords, {
+                    {
+                        id = 'qbx:garages:accessPoint',
+                        icon = 'car-side',
+                        label = locale('info.car_e'),
+                        distance = 5.0,
+                        onSelect = function()
                             if not checkCanAccess(garage) then return end
-                            if cache.vehicle and garage.type ~= GarageType.DEPOT then
-                                parkVehicle(cache.vehicle, garageName)
-                            else
-                                openGarageMenu(garageName, garage, accessPointIndex)
+                            openGarageMenu(garageName, garage, accessPointIndex)
+                        end,
+                        canInteract = function(_, distance)
+                            return distance <= 2.5
+                        end,
+                    },
+                    {
+                        id = 'qbx:garages:upgradeGarage',
+                        icon = 'wrench',
+                        label = locale('info.upgrade_garage'),
+                        distance = 5.0,
+                        onSelect = function()
+                            if not checkCanAccess(garage) then return end
+
+                            local upgradeInfo = lib.callback.await('qbx_garages:server:getUpgradeInfo', false, garageName)
+                            if not upgradeInfo then
+                                exports.qbx_core:Notify(locale('error.upgrade_disabled'), 'error')
+                                return
                             end
-                        end
-                    end,
-                    debug = config.debugPoly
+
+                            if not upgradeInfo.canUpgrade then
+                                exports.qbx_core:Notify(locale('error.max_upgrade'), 'error')
+                                return
+                            end
+
+                            if lib.alertDialog({
+                                    header = locale('menu.upgrade_garage'),
+                                    content = locale('menu.upgrade_confirm', lib.math.groupdigits(upgradeInfo.nextCost), upgradeInfo.currentLimit + 1),
+                                    centered = true,
+                                    cancel = true,
+                                }) == 'confirm' then
+                                lib.callback.await('qbx_garages:server:upgradeGarage', false, garageName)
+                            end
+                        end,
+                        canInteract = function(_, distance)
+                            return distance <= 2.5 and garage.canUpgrade ~= false and garage.type ~= GarageType.DEPOT
+                        end,
+                    },
                 })
             end,
             onExit = function()
                 if dropZone then
-                    dropZone:remove()
+                    exports.sleepless_interact:removeCoords(dropZone)
                 end
                 if coordsZone then
-                    coordsZone:remove()
+                    exports.sleepless_interact:removeCoords(coordsZone)
                 end
             end,
             inside = function()
@@ -333,7 +381,7 @@ local function createBlips(garageInfo, accessPoint)
     local blip = AddBlipForCoord(accessPoint.coords.x, accessPoint.coords.y, accessPoint.coords.z)
     SetBlipSprite(blip, accessPoint.blip.sprite or 357)
     SetBlipDisplay(blip, 4)
-    SetBlipScale(blip, 0.60)
+    SetBlipScale(blip, 0.65)
     SetBlipAsShortRange(blip, true)
     SetBlipColour(blip, accessPoint.blip.color or 3)
     BeginTextCommandSetBlipName('STRING')
