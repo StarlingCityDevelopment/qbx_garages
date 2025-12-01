@@ -104,7 +104,7 @@ local function calculateGarageLimit(src, citizenid, garageName)
     end
 
     local totalLimit = math.floor((baseLimit + upgradeBonus) * multiplier)
-    return math.min(totalLimit, limitsConfig.upgrades.max)
+    return garage.shared and baseLimit or math.min(totalLimit, limitsConfig.upgrades.max)
 end
 
 local function canStoreVehicle(src, garageName)

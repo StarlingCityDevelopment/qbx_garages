@@ -225,6 +225,10 @@ lib.callback.register('qbx_garages:server:parkVehicle', function(source, netId, 
         exports["t1ger_mechanic"]:SaveVehicleData(vehicle)
     end
 
+    if Garages[garage].shared and GetResourceState('qbx_vehiclekeys') == 'started' then
+        exports.qbx_vehiclekeys:RemoveKeys(source, vehicle)
+    end
+
     exports.qbx_vehicles:SaveVehicle(vehicle, {
         garage = garage,
         state = VehicleState.GARAGED,

@@ -367,66 +367,66 @@ return {
         -- },
 
         -- Job Garages
-        police = {
-            label = 'Garage Police',
+        lspd = {
+            label = 'Garage Los Santos Police Department',
             vehicleType = VehicleType.CAR,
             groups = 'police',
             shared = true,
-            limit = 30,
+            limit = 25,
             canUpgrade = false,
             accessPoints = {
                 {
-                    coords = vec4(454.6, -1017.4, 28.4, 0),
-                    spawn = vec4(438.4, -1018.3, 27.7, 90.0),
+                    coords = vec4(-578.13, -419.0, 31.16, 87.98),
+                    spawn = vec4(-577.38, -413.79, 31.16, 267.67),
+                    dropPoint = vec3(-582.71, -422.34, 31.16),
                 }
             },
         },
-
-        -- Gang Garages
-        -- ballas = {
-        --     label = 'Ballas',
-        --     vehicleType = VehicleType.CAR,
-        --     groups = 'ballas',
-        --     accessPoints = {
-        --         {
-        --             coords = vec4(98.50, -1954.49, 20.84, 0),
-        --             spawn = vec4(98.50, -1954.49, 20.75, 335.73),
-        --         }
-        --     },
-        -- },
-        -- families = {
-        --     label = 'La Familia',
-        --     vehicleType = VehicleType.CAR,
-        --     groups = 'families',
-        --     accessPoints = {
-        --         {
-        --             coords = vec4(-811.65, 187.49, 72.48, 0),
-        --             spawn = vec4(-818.43, 184.97, 72.28, 107.85),
-        --         }
-        --     },
-        -- },
-        -- lostmc = {
-        --     label = 'Lost MC',
-        --     vehicleType = VehicleType.CAR,
-        --     groups = 'lostmc',
-        --     accessPoints = {
-        --         {
-        --             coords = vec4(957.25, -129.63, 74.39, 0),
-        --             spawn = vec4(957.25, -129.63, 74.39, 199.21),
-        --         }
-        --     },
-        -- },
-        -- cartel = {
-        --     label = 'Cartel',
-        --     vehicleType = VehicleType.CAR,
-        --     groups = 'cartel',
-        --     accessPoints = {
-        --         {
-        --             coords = vec4(1407.18, 1118.04, 114.84, 0),
-        --             spawn = vec4(1407.18, 1118.04, 114.84, 88.34),
-        --         }
-        --     },
-        -- },
+        lsmc = {
+            label = 'Garage Los Santos Medical Center',
+            vehicleType = VehicleType.CAR,
+            groups = 'ambulance',
+            shared = true,
+            limit = 25,
+            canUpgrade = false,
+            accessPoints = {
+                {
+                    coords = vec4(89.37, -427.09, 39.38, 344.14),
+                    spawn = vec4(60.11, -423.32, 39.28, 342.75),
+                    dropPoint = vec3(80.21, -430.85, 39.38),
+                }
+            },
+        },
+        usss = {
+            label = 'Garage United States Secret Service',
+            vehicleType = VehicleType.CAR,
+            groups = 'usss',
+            shared = true,
+            limit = 25,
+            canUpgrade = false,
+            accessPoints = {
+                {
+                    coords = vec4(-577.67, -715.71, 26.73, 177.54),
+                    spawn = vec4(-598.02, -713.84, 26.73, 90.48),
+                    dropPoint = vec3(-580.05, -721.54, 26.73),
+                }
+            },
+        },
+        lscustoms = {
+            label = 'Garage Ls Customs',
+            vehicleType = VehicleType.CAR,
+            groups = 'lscustoms',
+            shared = true,
+            limit = 10,
+            canUpgrade = false,
+            accessPoints = {
+                {
+                    coords = vec4(-354.67, -125.44, 39.44, 71.37),
+                    spawn = vec4(-365.09, -148.23, 38.25, 124.03),
+                    dropPoint = vec3(-357.93, -120.38, 38.7),
+                }
+            },
+        },
 
         -- Impound Lots
         impoundlot = {

@@ -81,7 +81,9 @@ lib.callback.register('qbx_garages:server:spawnVehicle', function(source, vehicl
         end
     end
 
-    -- TriggerClientEvent('vehiclekeys:client:SetOwner', source, playerVehicle.props.plate)
+    if garage.shared and GetResourceState('qbx_vehiclekeys') == 'started' then
+        exports.qbx_vehiclekeys:RemoveKeys(source, veh)
+    end
 
     Entity(veh).state:set('vehicleid', vehicleId, false)
     setVehicleStateToOut(vehicleId, veh, playerVehicle.modelName)
