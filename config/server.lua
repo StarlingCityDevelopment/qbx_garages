@@ -24,8 +24,7 @@ return {
     ---@param modelName string
     ---@return integer fee
     calculateImpoundFee = function(vehicleId, modelName)
-        local vehCost = VEHICLES[modelName].price
-        return qbx.math.round(vehCost * 0.02) or 0
+        return 175.0
     end,
 
     ---@class GarageBlip
