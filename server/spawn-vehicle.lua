@@ -82,7 +82,7 @@ lib.callback.register('qbx_garages:server:spawnVehicle', function(source, vehicl
     end
 
     if garage.shared and GetResourceState('qbx_vehiclekeys') == 'started' then
-        exports.qbx_vehiclekeys:RemoveKeys(source, veh)
+        exports.qbx_vehiclekeys:GiveKeys(source, veh)
     end
 
     Entity(veh).state:set('vehicleid', vehicleId, false)
