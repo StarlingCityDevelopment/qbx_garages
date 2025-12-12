@@ -366,6 +366,36 @@ return {
         -- },
 
         -- Job Garages
+        government = {
+            label = 'Garage San Andreas Government',
+            vehicleType = VehicleType.CAR,
+            groups = 'government',
+            shared = true,
+            limit = 25,
+            canUpgrade = false,
+            accessPoints = {
+                {
+                    coords = vec4(-425.55, 1203.44, 325.76, 251.11),
+                    spawn = vec4(-414.72, 1198.92, 325.64, 164.15),
+                    dropPoint = vec3(-412.12, 1209.3, 325.64),
+                }
+            },
+        },
+        government_air = {
+            label = 'Héliport San Andreas Government',
+            vehicleType = VehicleType.AIR,
+            groups = 'government',
+            shared = true,
+            limit = 5,
+            canUpgrade = false,
+            accessPoints = {
+                {
+                    coords = vec4(-456.79, 1132.8, 325.9, 164.33),
+                    spawn = vec4(-453.41, 1145.42, 327.69, 346.2),
+                    dropPoint = vec3(-453.41, 1145.42, 327.69),
+                }
+            },
+        },
         lspd = {
             label = 'Garage Los Santos Police Department',
             vehicleType = VehicleType.CAR,
@@ -378,6 +408,21 @@ return {
                     coords = vec4(-578.13, -419.0, 31.16, 87.98),
                     spawn = vec4(-577.38, -413.79, 31.16, 267.67),
                     dropPoint = vec3(-582.71, -422.34, 31.16),
+                }
+            },
+        },
+        lspd_air = {
+            label = 'Héliport Los Santos Police Department',
+            vehicleType = VehicleType.AIR,
+            groups = 'police',
+            shared = true,
+            limit = 5,
+            canUpgrade = false,
+            accessPoints = {
+                {
+                    coords = vec4(-595.96, -419.61, 49.55, 2.04),
+                    spawn = vec4(-596.01, -431.41, 51.38, 179.21),
+                    dropPoint = vec3(-596.01, -431.41, 51.38),
                 }
             },
         },
@@ -396,6 +441,21 @@ return {
                 }
             },
         },
+        lsmc_air = {
+            label = 'Héliport Los Santos Medical Center',
+            vehicleType = VehicleType.AIR,
+            groups = 'ambulance',
+            shared = true,
+            limit = 5,
+            canUpgrade = false,
+            accessPoints = {
+                {
+                    coords = vec4(99.07, -410.79, 84.4, 340.61),
+                    spawn = vec4(95.09, -421.54, 86.3, 157.3),
+                    dropPoint = vec3(95.09, -421.54, 86.3),
+                }
+            },
+        },
         usss = {
             label = 'Garage United States Secret Service',
             vehicleType = VehicleType.CAR,
@@ -408,6 +468,21 @@ return {
                     coords = vec4(-577.67, -715.71, 26.73, 177.54),
                     spawn = vec4(-598.02, -713.84, 26.73, 90.48),
                     dropPoint = vec3(-580.05, -721.54, 26.73),
+                }
+            },
+        },
+        usss_air = {
+            label = 'Héliport United States Secret Service',
+            vehicleType = VehicleType.AIR,
+            groups = 'usss',
+            shared = true,
+            limit = 5,
+            canUpgrade = false,
+            accessPoints = {
+                {
+                    coords = vec4(-585.99, -716.91, 129.24, 272.92),
+                    spawn = vec4(-597.67, -716.84, 131.04, 95.19),
+                    dropPoint = vec3(-597.67, -716.84, 131.04),
                 }
             },
         },
