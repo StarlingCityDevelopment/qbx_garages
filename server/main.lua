@@ -86,13 +86,17 @@ end
 
 exports('SetVehicleDepotPrice', setVehicleDepotPrice)
 
+--- Finds if a plate is currently spawned on the server.
+---@param plate string
+---@return boolean
 function FindPlateOnServer(plate)
     local vehicles = GetAllVehicles()
     for i = 1, #vehicles do
-        if plate == GetVehicleNumberPlateText(vehicles[i]) then
+        if plate == qbx.getVehiclePlate(vehicles[i]) then
             return true
         end
     end
+    return false
 end
 
 ---@param garage string
@@ -153,9 +157,10 @@ lib.callback.register('qbx_garages:server:getGarageVehicles', function(source, g
     local toSend = {}
     if not playerVehicles[1] then return end
     for _, vehicle in pairs(playerVehicles) do
-        if not FindPlateOnServer(vehicle.props.plate) and not vehicle.coords then
-            local vehicleType = GetGarageType(garageName)
-            if not vehicleType or vehicleType == getVehicleType(vehicle) then
+        local isSpawned = FindPlateOnServer(vehicle.props.plate)
+        local isOut = vehicle.state == 0 and vehicle.coords
+        if not isSpawned and not isOut then
+            if not garage.vehicleType or garage.vehicleType == getVehicleType(vehicle) then
                 toSend[#toSend + 1] = vehicle
             end
         end
