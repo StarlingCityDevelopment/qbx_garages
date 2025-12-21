@@ -153,9 +153,9 @@ lib.callback.register('qbx_garages:server:getGarageVehicles', function(source, g
     local toSend = {}
     if not playerVehicles[1] then return end
     for _, vehicle in pairs(playerVehicles) do
-        if not FindPlateOnServer(vehicle.props.plate) then
-            local vehicleType = Garages[garageName].vehicleType
-            if vehicleType == getVehicleType(vehicle) then
+        if not FindPlateOnServer(vehicle.props.plate) and not vehicle.coords then
+            local vehicleType = GetGarageType(garageName)
+            if not vehicleType or vehicleType == getVehicleType(vehicle) then
                 toSend[#toSend + 1] = vehicle
             end
         end
