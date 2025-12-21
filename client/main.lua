@@ -135,7 +135,7 @@ local function displayVehicleInfo(vehicle, garageName, garageInfo, accessPoint)
     if vehicle.state == VehicleState.OUT then
         if garageInfo.type == GarageType.DEPOT then
             options[#options + 1] = {
-                title = 'Take out',
+                title = locale('menu.take_out'),
                 icon = 'fa-truck-ramp-box',
                 description = ('$%s'):format(lib.math.groupdigits(vehicle.depotPrice)),
                 arrow = true,
@@ -161,9 +161,13 @@ local function displayVehicleInfo(vehicle, garageName, garageInfo, accessPoint)
         }
     elseif vehicle.state == VehicleState.IMPOUNDED then
         options[#options + 1] = {
-            title = locale('menu.veh_impounded'),
-            icon = 'building-shield',
-            readOnly = true,
+            title = locale('menu.take_out'),
+            icon = 'fa-truck-ramp-box',
+            description = ('$%s'):format(lib.math.groupdigits(vehicle.depotPrice)),
+            arrow = true,
+            onSelect = function()
+                takeOutOfGarage(vehicle.id, garageName, accessPoint)
+            end,
         }
     end
 
