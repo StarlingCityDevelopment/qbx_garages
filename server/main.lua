@@ -119,6 +119,7 @@ function GetPlayerVehicleFilter(source, garageName)
     local garage = Garages[garageName]
     local filter = {}
     filter.citizenid = not garage.shared and player.PlayerData.citizenid or nil
+    filter.group = player.PlayerData.job.name
     filter.states = garage.states or VehicleState.GARAGED
     filter.garage = not garage.skipGarageCheck and garageName or nil
     return filter
@@ -158,9 +159,7 @@ lib.callback.register('qbx_garages:server:getGarageVehicles', function(source, g
     local toSend = {}
     if not playerVehicles[1] then return end
     for _, vehicle in pairs(playerVehicles) do
-        local isSpawned = FindPlateOnServer(vehicle.props.plate)
-        local isOut = vehicle.state == 0 and vehicle.coords
-        if not isSpawned and not isOut then
+        if not FindPlateOnServer(vehicle.props.plate) and not vehicle.state == 0 then
             if not garage.vehicleType or garage.vehicleType == getVehicleType(vehicle) then
                 toSend[#toSend + 1] = vehicle
             end
