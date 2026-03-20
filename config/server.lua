@@ -456,6 +456,21 @@ return {
                 }
             },
         },
+        dhs = {
+            label = 'Garage Department of Homeland Security',
+            vehicleType = VehicleType.CAR,
+            groups = 'dhs',
+            shared = true,
+            limit = 25,
+            canUpgrade = false,
+            accessPoints = {
+                {
+                    coords = vec4(-1046.04, -233.12, 32.31, 121.5),
+                    spawn = vec4(-1052.4, -232.11, 32.31, 119.45),
+                    dropPoint = vec3(-1050.12, -231.05, 32.31),
+                }
+            },
+        },
         usss = {
             label = 'Garage United States Secret Service',
             vehicleType = VehicleType.CAR,
