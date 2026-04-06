@@ -15,12 +15,16 @@ lib.versionCheck('Qbox-project/qbx_garages')
 ---@field depotPrice integer
 ---@field props table ox_lib properties table
 
-Config = require 'config.server'
 VEHICLES = exports.qbx_core:GetVehiclesByName()
+
+Config = require 'config.server'
 Storage = require 'server.storage'
 Limits = require 'server.limits'
+
 ---@type table<string, GarageConfig>
 Garages = Config.garages
+
+local persistentVehicles = {}
 
 lib.callback.register('qbx_garages:server:getGarages', function()
     return Garages
@@ -159,7 +163,11 @@ lib.callback.register('qbx_garages:server:getGarageVehicles', function(source, g
     local toSend = {}
     if not playerVehicles[1] then return end
     for _, vehicle in pairs(playerVehicles) do
-        if not FindPlateOnServer(vehicle.props.plate) then
+        local isOutInWorld = FindPlateOnServer(vehicle.props.plate)
+        local isOutStateValid = vehicle.state == VehicleState.OUT and vehicle.coords ~= nil and not persistentVehicles[vehicle.id]
+        local isStoredStateValid = (vehicle.state == VehicleState.GARAGED or vehicle.state == VehicleState.IMPOUNDED) and not isOutInWorld
+
+        if isOutStateValid or isStoredStateValid then
             local vehicleType = Garages[garageName].vehicleType
             if vehicleType == getVehicleType(vehicle) then
                 toSend[#toSend + 1] = vehicle
@@ -242,6 +250,10 @@ lib.callback.register('qbx_garages:server:parkVehicle', function(source, netId, 
     })
 
     exports.qbx_core:DeleteVehicle(vehicle)
+end)
+
+AddEventHandler('qbx_core:server:persistentVehicleSpawned', function(vehicleId)
+    persistentVehicles[vehicleId] = true
 end)
 
 AddEventHandler('onResourceStart', function(resource)
