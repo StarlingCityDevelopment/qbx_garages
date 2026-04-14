@@ -271,8 +271,8 @@ AddEventHandler('onResourceStart', function(resource)
         if not vehicles then return end
         for i = 1, #vehicles do
             local vehicle = vehicles[i]
-            if vehicle.coords and vehicle.props and vehicle.props.plate and not FindPlateOnServer(vehicle.id) then
-                persistentVehicles[vehicle.id] = vehicle.coords
+            if vehicle.coords and vehicle.props and vehicle.props.plate and not FindPlateOnServer(vehicle.props.plate) then
+                persistentVehicles[vehicle.id] = true
             end
         end
     end
