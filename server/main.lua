@@ -163,11 +163,7 @@ lib.callback.register('qbx_garages:server:getGarageVehicles', function(source, g
     local toSend = {}
     if not playerVehicles[1] then return end
     for _, vehicle in pairs(playerVehicles) do
-        local isOutInWorld = FindPlateOnServer(vehicle.props.plate)
-        local isOutStateValid = vehicle.state == VehicleState.OUT and vehicle.coords ~= nil and not persistentVehicles[vehicle.id]
-        local isStoredStateValid = (vehicle.state == VehicleState.GARAGED or vehicle.state == VehicleState.IMPOUNDED) and not isOutInWorld
-
-        if isOutStateValid or isStoredStateValid then
+        if not FindPlateOnServer(vehicle.props.plate) and not persistentVehicles[vehicle.id] then
             local vehicleType = Garages[garageName].vehicleType
             if vehicleType == getVehicleType(vehicle) then
                 toSend[#toSend + 1] = vehicle
@@ -253,12 +249,34 @@ lib.callback.register('qbx_garages:server:parkVehicle', function(source, netId, 
 end)
 
 AddEventHandler('qbx_core:server:persistentVehicleSpawned', function(vehicleId)
-    persistentVehicles[vehicleId] = true
+    persistentVehicles[vehicleId] = nil
+end)
+
+AddEventHandler('entityRemoved', function(entity)
+    local vehicleId = Entity(entity).state.vehicleid or exports.qbx_vehicles:GetVehicleIdByPlate(qbx.getVehiclePlate(entity))
+    if not vehicleId then return end
+    persistentVehicles[vehicleId] = nil
 end)
 
 AddEventHandler('onResourceStart', function(resource)
     if resource ~= cache.resource then return end
     Wait(100)
+
+    if lib.waitFor(function()
+        if GetResourceState('qbx_vehicles') == 'started' then
+            return true
+        end
+    end, 'Couldn\'t start due to qbx_vehicles dependency') then
+        local vehicles = exports.qbx_vehicles:GetPlayerVehicles({ states = 0 })
+        if not vehicles then return end
+        for i = 1, #vehicles do
+            local vehicle = vehicles[i]
+            if vehicle.coords and vehicle.props and vehicle.props.plate and not FindPlateOnServer(vehicle.id) then
+                persistentVehicles[vehicle.id] = vehicle.coords
+            end
+        end
+    end
+
     if Config.autoRespawn then
         Storage.moveOutVehiclesIntoGarages()
     end
