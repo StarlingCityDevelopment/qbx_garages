@@ -142,9 +142,9 @@ end
 ---@param playerVehicle PlayerVehicle
 ---@return VehicleType
 local function getVehicleType(playerVehicle)
-    if VEHICLES[playerVehicle.modelName].category == 'helicopters' or VEHICLES[playerVehicle.modelName].category == 'planes' then
+    if VEHICLES[playerVehicle.modelName].type == 'heli' or VEHICLES[playerVehicle.modelName].type == 'plane' then
         return VehicleType.AIR
-    elseif VEHICLES[playerVehicle.modelName].category == 'boats' then
+    elseif VEHICLES[playerVehicle.modelName].type == 'boat' or VEHICLES[playerVehicle.modelName].type == 'submarine' then
         return VehicleType.SEA
     else
         return VehicleType.CAR
@@ -194,6 +194,10 @@ local function isParkable(source, vehicleId, garageName)
     end
     if not garage.shared then
         if playerVehicle.citizenid ~= player.PlayerData.citizenid then
+            return false
+        end
+    else
+        if garage.groups and garage.groups ~= playerVehicle.group then
             return false
         end
     end
