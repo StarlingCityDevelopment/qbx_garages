@@ -471,38 +471,38 @@ return {
                 }
             },
         },
-        usss = {
-            label = 'Garage United States Secret Service',
-            vehicleType = VehicleType.CAR,
-            groups = 'usss',
-            shared = true,
-            limit = 25,
-            canUpgrade = false,
-            accessPoints = {
-                {
-                    coords = vec4(-577.67, -715.71, 26.73, 177.54),
-                    spawn = vec4(-598.02, -713.84, 26.73, 90.48),
-                    dropPoint = vec3(-580.05, -721.54, 26.73),
-                }
-            },
-        },
-        usss_air = {
-            label = 'Héliport United States Secret Service',
-            vehicleType = VehicleType.AIR,
-            groups = 'usss',
-            shared = true,
-            limit = 5,
-            canUpgrade = false,
-            accessPoints = {
-                {
-                    coords = vec4(-585.99, -716.91, 129.24, 272.92),
-                    spawn = vec4(-597.67, -716.84, 131.04, 95.19),
-                    dropPoint = vec3(-597.67, -716.84, 131.04),
-                }
-            },
-        },
+        -- usss = {
+            -- label = 'Garage United States Secret Service',
+            -- vehicleType = VehicleType.CAR,
+            -- groups = 'usss',
+            -- shared = true,
+            -- limit = 25,
+            -- canUpgrade = false,
+            -- accessPoints = {
+                -- {
+                    -- coords = vec4(-577.67, -715.71, 26.73, 177.54),
+                    -- spawn = vec4(-598.02, -713.84, 26.73, 90.48),
+                    -- dropPoint = vec3(-580.05, -721.54, 26.73),
+                -- }
+            -- },
+        -- },
+        -- usss_air = {
+            -- label = 'Héliport United States Secret Service',
+            -- vehicleType = VehicleType.AIR,
+            -- groups = 'usss',
+            -- shared = true,
+            -- limit = 5,
+            -- canUpgrade = false,
+            -- accessPoints = {
+                -- {
+                    -- coords = vec4(-585.99, -716.91, 129.24, 272.92),
+                    -- spawn = vec4(-597.67, -716.84, 131.04, 95.19),
+                    -- dropPoint = vec3(-597.67, -716.84, 131.04),
+                -- }
+            -- },
+        -- },
         lscustoms = {
-            label = 'Garage Ls Customs',
+            label = 'Garage LS Customs',
             vehicleType = VehicleType.CAR,
             groups = 'lscustoms',
             shared = true,
@@ -513,6 +513,86 @@ return {
                     coords = vec4(-354.67, -125.44, 39.44, 71.37),
                     spawn = vec4(-365.09, -148.23, 38.25, 124.03),
                     dropPoint = vec3(-357.93, -120.38, 38.7),
+                }
+            },
+        },
+
+        cruisin = {
+            label = 'Garage Cruisin Craftsmen',
+            vehicleType = VehicleType.CAR,
+            groups = 'cruisin',
+            shared = true,
+            limit = 10,
+            canUpgrade = false,
+            accessPoints = {
+                {
+                    coords = vec4(-347.8, -1323.83, 31.59, 355.18),
+                    spawn = vec4(-339.87, -1314.39, 31.44, 269.34),
+                    dropPoint = vec3(-348.67, -1319.13, 31.44),
+                }
+            },
+        },
+
+        tsubaki = {
+            label = 'Garage Tsubaki Sushi',
+            vehicleType = VehicleType.CAR,
+            groups = 'tsubaki',
+            shared = true,
+            limit = 5,
+            canUpgrade = false,
+            accessPoints = {
+                {
+                    coords = vec4(-182.63, 323.17, 97.94, 183.1),
+                    spawn = vec4(-210.63, 307.72, 96.95, 281.39),
+                    dropPoint = vec3(-199.68, 314.68, 96.95),
+                }
+            },
+        },
+
+        unicorn = {
+            label = 'Garage Vanilla Unicorn',
+            vehicleType = VehicleType.CAR,
+            groups = 'unicorn',
+            shared = true,
+            limit = 5,
+            canUpgrade = false,
+            accessPoints = {
+                {
+                    coords = vec4(143.02, -1321.15, 29.21, 187.14),
+                    spawn = vec4(144.75, -1335.92, 29.21, 49.2),
+                    dropPoint = vec3(157.22, -1339.92, 29.21),
+                }
+            },
+        },
+
+        burgershot = {
+            label = 'Garage Burger Shot',
+            vehicleType = VehicleType.CAR,
+            groups = 'burgershot',
+            shared = true,
+            limit = 5,
+            canUpgrade = false,
+            accessPoints = {
+                {
+                    coords = vec4(-1189.0, -906.74, 13.63, 292.34),
+                    spawn = vec4(-1175.76, -898.91, 13.71, 301.93),
+                    dropPoint = vec3(-1171.24, -890.67, 13.95),
+                }
+            },
+        },
+
+        uwu = {
+            label = 'Garage UwU Café',
+            vehicleType = VehicleType.CAR,
+            groups = 'uwu',
+            shared = true,
+            limit = 5,
+            canUpgrade = false,
+            accessPoints = {
+                {
+                    coords = vec4(-609.56, -1069.66, 22.38, 25.86),
+                    spawn = vec4(-611.01, -1059.07, 21.79, 87.67),
+                    dropPoint = vec3(-617.48, -1052.84, 21.79),
                 }
             },
         },
