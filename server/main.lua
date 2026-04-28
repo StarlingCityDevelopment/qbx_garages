@@ -206,8 +206,9 @@ end
 
 lib.callback.register('qbx_garages:server:isParkable', function(source, garage, netId)
     local vehicle = NetworkGetEntityFromNetworkId(netId)
+    if not vehicle or not DoesEntityExist(vehicle) then return end
     local vehicleId = Entity(vehicle).state.vehicleid or
-        exports.qbx_vehicles:GetVehicleIdByPlate(GetVehicleNumberPlateText(vehicle))
+        exports.qbx_vehicles:GetVehicleIdByPlate(qbx.getVehiclePlate(vehicle))
     return isParkable(source, vehicleId, garage)
 end)
 
@@ -217,9 +218,12 @@ end)
 ---@param garage string
 lib.callback.register('qbx_garages:server:parkVehicle', function(source, netId, props, garage)
     assert(Garages[garage] ~= nil, string.format('Garage %s not found. Did you register this garage?', garage))
+
     local vehicle = NetworkGetEntityFromNetworkId(netId)
+    if not vehicle or not DoesEntityExist(vehicle) then return end
+
     local vehicleId = Entity(vehicle).state.vehicleid or
-        exports.qbx_vehicles:GetVehicleIdByPlate(GetVehicleNumberPlateText(vehicle))
+        exports.qbx_vehicles:GetVehicleIdByPlate(qbx.getVehiclePlate(vehicle))
 
     local owned = isParkable(source, vehicleId, garage)
     if not owned then
@@ -257,7 +261,9 @@ AddEventHandler('qbx_core:server:persistentVehicleSpawned', function(vehicleId)
 end)
 
 AddEventHandler('entityRemoved', function(entity)
-    local vehicleId = Entity(entity).state.vehicleid or exports.qbx_vehicles:GetVehicleIdByPlate(qbx.getVehiclePlate(entity))
+    if not entity or not DoesEntityExist(entity) then return end
+    local vehicleId = Entity(entity).state.vehicleid or
+        exports.qbx_vehicles:GetVehicleIdByPlate(qbx.getVehiclePlate(entity))
     if not vehicleId then return end
     persistentVehicles[vehicleId] = nil
 end)
@@ -267,10 +273,10 @@ AddEventHandler('onResourceStart', function(resource)
     Wait(100)
 
     if lib.waitFor(function()
-        if GetResourceState('qbx_vehicles') == 'started' then
-            return true
-        end
-    end, 'Couldn\'t start due to qbx_vehicles dependency') then
+            if GetResourceState('qbx_vehicles') == 'started' then
+                return true
+            end
+        end, 'Couldn\'t start due to qbx_vehicles dependency') then
         local vehicles = exports.qbx_vehicles:GetPlayerVehicles({ states = 0 })
         if not vehicles then return end
         for i = 1, #vehicles do
