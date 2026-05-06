@@ -95,6 +95,7 @@ exports('SetVehicleDepotPrice', setVehicleDepotPrice)
 ---@param plate string
 ---@return boolean
 function FindPlateOnServer(plate)
+    if not plate or type(plate) ~= 'string' then return false end
     local vehicles = GetAllVehicles()
     local trimmedPlate = qbx.string.trim(plate)
     for i = 1, #vehicles do
