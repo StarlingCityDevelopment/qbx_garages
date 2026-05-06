@@ -597,6 +597,22 @@ return {
             },
         },
 
+        taxi = {
+            label = 'Garage Taxi',
+            vehicleType = VehicleType.CAR,
+            groups = 'taxi',
+            shared = true,
+            limit = 5,
+            canUpgrade = false,
+            accessPoints = {
+                {
+                    coords = vec4(-1259.43, -294.79, 37.41, 115.85),
+                    spawn = vec4(-1258.72, -296.23, 37.41, 114.99),
+                    dropPoint = vec3(-1247.75, -288.79, 37.55),
+                }
+            },
+        },
+
         -- Impound Lots
         impoundlot = {
             label = 'Fourrière',
