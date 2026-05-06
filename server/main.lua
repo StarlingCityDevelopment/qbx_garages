@@ -96,8 +96,9 @@ exports('SetVehicleDepotPrice', setVehicleDepotPrice)
 ---@return boolean
 function FindPlateOnServer(plate)
     local vehicles = GetAllVehicles()
+    local trimmedPlate = qbx.string.trim(plate)
     for i = 1, #vehicles do
-        if plate == qbx.getVehiclePlate(vehicles[i]) then
+        if trimmedPlate == qbx.getVehiclePlate(vehicles[i]) then
             return true
         end
     end
