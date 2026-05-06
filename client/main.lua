@@ -261,6 +261,7 @@ local function parkVehicle(vehicle, garageName)
 
         kickOutPeds(vehicle)
         SetVehicleDoorsLocked(vehicle, 2)
+        exports.wasabi_ambulance:deleteStretcherFromVehicle(vehicle)
         Wait(1500)
         lib.callback.await('qbx_garages:server:parkVehicle', false, NetworkGetNetworkIdFromEntity(vehicle),
             lib.getVehicleProperties(vehicle), garageName)
